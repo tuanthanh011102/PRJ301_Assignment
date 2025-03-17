@@ -140,4 +140,132 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public ArrayList<LeaveRequest> list(String username) {
+        ArrayList<LeaveRequest> list = new ArrayList<>();
+        String sql = "SELECT lr.[rid]\n"
+                + "      ,lr.[title]\n"
+                + "      ,lr.[reason]\n"
+                + "      ,lr.[from]\n"
+                + "      ,lr.[to]\n"
+                + "      ,lr.[createdby]\n"
+                + "      ,lr.[status]\n"
+                + "      ,lr.[createddate]\n"
+                + "	  ,u.displayname\n"
+                + "	  ,u.eid\n"
+                + "	  ,e.ename\n"
+                + "	  ,e.did\n"
+                + "	  ,d.dname\n"
+                + "  FROM [dbo].[LeaveRequest] lr\n"
+                + "  inner join Users u on u.username = lr.createdby\n"
+                + "  inner join Employees e on e.eid = u.eid\n"
+                + "  inner join Departments d on d.did = e.did\n"
+                + "  Where [createdby] = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, username);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                LeaveRequest lr = new LeaveRequest();
+                lr.setId(rs.getInt("rid"));
+                lr.setTitle(rs.getString("title"));
+                lr.setFrom(rs.getDate("from"));
+                lr.setTo(rs.getDate("to"));
+                lr.setReason(rs.getString("reason"));
+                lr.setStatus(rs.getInt("status"));
+                User u = new User();
+                u.setUsername(username);
+                u.setDisplayname(rs.getString("displayname"));
+                lr.setCreatedby(u);
+                lr.setCreateddate(rs.getDate("createddate"));
+                list.add(lr);
+              
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+    public ArrayList<LeaveRequest> getByManager(int managerId) {
+        ArrayList<LeaveRequest> requests = new ArrayList<>();
+        try {
+            String sql = "WITH EmployeeHierarchy AS (\n"
+                    + "    SELECT \n"
+                    + "        eid,\n"
+                    + "		ename,\n"
+                    + "        managerid,\n"
+                    + "		did,\n"
+                    + "        0 AS [Level]\n"
+                    + "    FROM Employees\n"
+                    + "    WHERE eid = ? \n"
+                    + "\n"
+                    + "    UNION ALL\n"
+                    + "\n"
+                    + "    SELECT \n"
+                    + "        e.eid,\n"
+                    + "		e.ename,\n"
+                    + "        e.managerid,\n"
+                    + "		e.did,\n"
+                    + "        eh.Level + 1\n"
+                    + "    FROM Employees e\n"
+                    + "    INNER JOIN EmployeeHierarchy eh ON eh.eid = e.managerid\n"
+                    + ")\n"
+                    + "\n"
+                    + "SELECT \n"
+                    + "    lr.rid,\n"
+                    + "    lr.title,\n"
+                    + "    lr.reason,\n"
+                    + "    lr.[from],\n"
+                    + "    lr.[to],\n"
+                    + "    lr.status,\n"
+                    + "lr.createddate,\n"
+                    + "	u.username, u.displayname, eh.eid, eh.ename, d.did, d.dname\n"
+                    + "FROM EmployeeHierarchy eh\n"
+                    + "INNER JOIN Users u ON u.eid = eh.eid\n"
+                    + "INNER JOIN LeaveRequest lr ON lr.createdby = u.username\n"
+                    + "INNER JOIN Departments d ON d.did = eh.did\n"
+                    + "WHERE eh.Level > 0;";
+
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, managerId);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                LeaveRequest r = new LeaveRequest();
+                r.setId(rs.getInt("rid"));
+                r.setTitle(rs.getString("title"));
+                r.setReason(rs.getString("reason"));
+                r.setFrom(rs.getDate("from"));
+                r.setTo(rs.getDate("to"));
+                r.setCreateddate(rs.getTimestamp("createddate"));
+                r.setStatus(rs.getInt("status"));
+
+                User u = new User();
+                u.setUsername(rs.getString("username"));
+                u.setDisplayname(rs.getString("displayname"));
+                r.setCreatedby(u);
+
+                Employee e = new Employee();
+                u.setE(e);
+                e.setId(rs.getInt("eid"));
+                e.setName(rs.getString("ename"));
+
+                EmployeeDBContext db = new EmployeeDBContext();
+
+                e.setManager(db.get(managerId)); // Gán manager ID
+
+                Department d = new Department();
+                e.setDept(d);
+                d.setId(rs.getInt("did"));
+                d.setName(rs.getString("dname"));
+
+                requests.add(r);
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return requests;
+    }
 }
