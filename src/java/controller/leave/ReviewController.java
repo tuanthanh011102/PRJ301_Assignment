@@ -5,6 +5,8 @@
 package controller.leave;
 
 import controller.authentication.BaseRequiredAuthenticationController;
+import dal.LeaveRequestDBContext;
+import data.LeaveRequest;
 import data.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +26,13 @@ public class ReviewController extends BaseRequiredAuthenticationController{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp, User user) throws ServletException, IOException {
-     resp.getWriter().print("review");
+        String id = req.getParameter("id");
+        LeaveRequestDBContext lr = new LeaveRequestDBContext();
+        LeaveRequest l = lr.getByID(Integer.parseInt(id));
+        req.setAttribute("l", l);
+        req.setAttribute("id", id);
+    req.getRequestDispatcher("/view/leave/approval.jsp").forward(req, resp);
+    
     }
     
 }

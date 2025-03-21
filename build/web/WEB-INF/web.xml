@@ -40,4 +40,7 @@
         <servlet-name>ReviewController</servlet-name>
         <url-pattern>/leaverequest/review</url-pattern>
     </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>login</welcome-file>
+    </welcome-file-list>
 </web-app>

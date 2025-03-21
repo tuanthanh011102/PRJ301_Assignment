@@ -178,7 +178,7 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
                 lr.setCreatedby(u);
                 lr.setCreateddate(rs.getDate("createddate"));
                 list.add(lr);
-              
+
             }
 
         } catch (SQLException ex) {
@@ -186,6 +186,7 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
         }
         return list;
     }
+
     public ArrayList<LeaveRequest> getByManager(int managerId) {
         ArrayList<LeaveRequest> requests = new ArrayList<>();
         try {
@@ -267,5 +268,51 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
                     .getName()).log(Level.SEVERE, null, ex);
         }
         return requests;
+    }
+
+    public LeaveRequest getByID(int id) {
+        LeaveRequest lr = new LeaveRequest();
+        String sql = "SELECT lr.[rid]\n"
+                + "      ,lr.[title]\n"
+                + "      ,lr.[reason]\n"
+                + "      ,lr.[from]\n"
+                + "      ,lr.[to]\n"
+                + "      ,lr.[createdby]\n"
+                + "      ,lr.[status]\n"
+                + "      ,lr.[createddate]\n"
+                + "	  ,u.displayname\n"
+                + "	  ,u.eid\n"
+                + "	  ,e.ename\n"
+                + "	  ,e.did\n"
+                + "	  ,d.dname\n"
+                + "  FROM [dbo].[LeaveRequest] lr\n"
+                + "  inner join Users u on u.username = lr.createdby\n"
+                + "  inner join Employees e on e.eid = u.eid\n"
+                + "  inner join Departments d on d.did = e.did\n"
+                + "  Where [rid] = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            if(rs.next()){
+             
+                lr.setId(rs.getInt("rid"));
+                lr.setTitle(rs.getString("title"));
+                lr.setFrom(rs.getDate("from"));
+                lr.setTo(rs.getDate("to"));
+                lr.setReason(rs.getString("reason"));
+                lr.setStatus(rs.getInt("status"));
+                User u = new User();
+                u.setUsername(rs.getString("createdby"));
+                u.setDisplayname(rs.getString("displayname"));
+                lr.setCreatedby(u);
+                lr.setCreateddate(rs.getDate("createddate"));
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return lr;
     }
 }
