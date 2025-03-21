@@ -106,22 +106,23 @@
                 <label>Tiêu đề:</label>
                 <div class="info-box">${l.title}</div>
             </div>
+            <div class="form-group">
+                <label>Tạo bởi:</label>
+                <div class="info-box">${l.createdby.username}</div>
+            </div>
 
             <div class="form-group">
                 <label>Từ ngày:</label>
                 <div class="info-box">${l.from}</div>
             </div>
-
             <div class="form-group">
                 <label>Tới ngày:</label>
                 <div class="info-box">${l.to}</div>
             </div>
-
             <div class="form-group">
                 <label>Lý do:</label>
                 <div class="info-box">${l.reason}</div>
             </div>
-
             <form action="review" method="post">
                 <input type="hidden" name="id" value="${l.id}">
                 <div class="btn-container">
