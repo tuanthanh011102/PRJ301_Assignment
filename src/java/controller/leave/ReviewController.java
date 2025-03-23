@@ -21,7 +21,13 @@ public class ReviewController extends BaseRequiredAuthenticationController{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp, User user) throws ServletException, IOException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+      String id = req.getParameter("id");
+      String action = req.getParameter("action");
+      LeaveRequestDBContext db = new LeaveRequestDBContext();
+      LeaveRequest l = db.getByID(Integer.parseInt(id));
+      int status = action.equals("approved")?2:1;
+      resp.getWriter().print(status);
+         db.update(l.getId(),status);
     }
 
     @Override

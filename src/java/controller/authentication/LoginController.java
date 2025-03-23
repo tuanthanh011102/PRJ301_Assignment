@@ -35,7 +35,7 @@ public class LoginController extends HttpServlet {
            
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
-          resp.sendRedirect("leaverequest/list");
+          resp.sendRedirect("view/auth/homepage.jsp");
         } else {
             resp.getWriter().println("login failed!");
         }

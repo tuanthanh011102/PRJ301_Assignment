@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -125,10 +126,13 @@
             </div>
             <form action="review" method="post">
                 <input type="hidden" name="id" value="${l.id}">
-                <div class="btn-container">
-                    <button type="submit" name="approved" class="btn approve-btn">Phê duyệt</button>
-                    <button type="submit" name="reject" class="btn reject-btn">Từ chối</button>
+                <c:if test="${l.status == 0}">
+                    <div class="btn-container">
+                    <input type="submit" name="action" value="approved" class="btn approve-btn" >
+                    <input type="submit" name="action" value="reject" class="btn reject-btn" >
                 </div>
+                </c:if>
+                      
             </form>
         </div>
     </div>

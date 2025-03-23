@@ -294,8 +294,8 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, id);
             ResultSet rs = stm.executeQuery();
-            if(rs.next()){
-             
+            if (rs.next()) {
+
                 lr.setId(rs.getInt("rid"));
                 lr.setTitle(rs.getString("title"));
                 lr.setFrom(rs.getDate("from"));
@@ -307,12 +307,24 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
                 u.setDisplayname(rs.getString("displayname"));
                 lr.setCreatedby(u);
                 lr.setCreateddate(rs.getDate("createddate"));
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return lr;
+    }
+
+    public void update(int rid, int status) {
+        String sql = "UPDATE LeaveRequest SET status = ? WHERE rid = ?";
+        try{
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, status);
+            stm.setInt(2, rid);
+            stm.executeUpdate();
+        }catch(SQLException ex){
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
