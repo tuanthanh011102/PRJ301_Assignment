@@ -2,6 +2,29 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/dal/UserDBContext.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/authentication/LoginController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/authentication/Home.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/data/Feature.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/leave/ManagerListController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/web/view/leave/list.jsp</file>
+            <file>file:/D:/asign/PRJ301_Assignment/web/view/auth/homepage.jsp</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/leave/ReviewController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/leave/ListController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/leave/CreateController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/dal/EmployeeDBContext.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/web/view/leave/agenda.jsp</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/dal/DBContext.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/web/WEB-INF/web.xml</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/leave/agendaController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/data/LeaveRequest.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/controller/authentication/BaseRequiredAuthenticationController.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/data/Agenda.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/web/view/leave/approval.jsp</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/dal/LeaveRequestDBContext.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/src/java/data/User.java</file>
+            <file>file:/D:/asign/PRJ301_Assignment/web/view/leave/request.jsp</file>
+        </group>
     </open-files>
 </project-private>

@@ -17,17 +17,18 @@ import java.io.IOException;
  *
  * @author Lenovo
  */
-public class ReviewController extends BaseRequiredAuthenticationController{
+public class ReviewController extends BaseRequiredAuthenticationController {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp, User user) throws ServletException, IOException {
-      String id = req.getParameter("id");
-      String action = req.getParameter("action");
-      LeaveRequestDBContext db = new LeaveRequestDBContext();
-      LeaveRequest l = db.getByID(Integer.parseInt(id));
-      int status = action.equals("approved")?2:1;
-      resp.getWriter().print(status);
-         db.update(l.getId(),status);
+        String id = req.getParameter("id");
+        String action = req.getParameter("action");
+        LeaveRequestDBContext db = new LeaveRequestDBContext();
+        LeaveRequest l = db.getByID(Integer.parseInt(id));
+        int status = action.equals("approved") ? 2 : 1;
+
+        db.update(l.getId(), status);
+        resp.sendRedirect("../leaverequest/manager/list");
     }
 
     @Override
@@ -37,8 +38,8 @@ public class ReviewController extends BaseRequiredAuthenticationController{
         LeaveRequest l = lr.getByID(Integer.parseInt(id));
         req.setAttribute("l", l);
         req.setAttribute("id", id);
-    req.getRequestDispatcher("/view/leave/approval.jsp").forward(req, resp);
-    
+        req.getRequestDispatcher("/view/leave/approval.jsp").forward(req, resp);
+
     }
-    
+
 }

@@ -19,7 +19,21 @@ public class EmployeeDBContext extends DBContext<Employee> {
 
     @Override
     public ArrayList<Employee> list() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ArrayList<Employee> employees = new ArrayList<>();
+        String sql = "Select * from Employees";
+        try {
+            PreparedStatement pr = connection.prepareStatement(sql);
+            ResultSet rs = pr.executeQuery();
+            while(rs.next()){
+                Employee e = new Employee();
+                e.setId(rs.getInt("eid"));
+                e.setName(rs.getString("ename"));
+                employees.add(e);
+                
+            }
+        } catch (Exception e) {
+        }
+        return employees;
     }
 
     @Override

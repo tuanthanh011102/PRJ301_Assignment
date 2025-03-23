@@ -38,8 +38,8 @@ public class CreateController extends BaseRequiredAuthenticationController {
 
         LeaveRequestDBContext db = new LeaveRequestDBContext();
         db.insert(lr);
-        System.out.println("inserted successful!");
-        resp.getWriter().print(lr);
+        resp.sendRedirect("../leaverequest/list");
+        
     }
 
     @Override

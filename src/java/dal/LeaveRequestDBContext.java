@@ -4,12 +4,16 @@
  */
 package dal;
 
+import data.Agenda;
 import data.Department;
 import data.Employee;
 import data.LeaveRequest;
 import data.User;
-import java.util.ArrayList;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -318,13 +322,89 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
 
     public void update(int rid, int status) {
         String sql = "UPDATE LeaveRequest SET status = ? WHERE rid = ?";
-        try{
+        try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, status);
             stm.setInt(2, rid);
             stm.executeUpdate();
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public List<Agenda> agenda() {
+        List<Agenda> alist = new ArrayList<>();
+        String sql = "WITH DateRange AS ("
+                + " SELECT lr.rid, lr.createdby, lr.[from], lr.[to],"
+                + " DATEADD(DAY, number, lr.[from]) AS off_date"
+                + " FROM [LeaveRequest] lr"
+                + " CROSS APPLY ("
+                + " SELECT TOP (DATEDIFF(DAY, lr.[from], lr.[to]) + 1)"
+                + " number = ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1"
+                + " FROM master.dbo.spt_values"
+                + " ) AS Numbers"
+                + " WHERE lr.status = 2"
+                + " )"
+                + " SELECT e.eid AS EmployeeID, e.ename AS EmployeeName,"
+                + " e.managerid AS ManagerID, e.did AS DepartmentID,"
+                + " dr.off_date AS OffWorkDate, dr.rid AS LeaveRequestID"
+                + " FROM DateRange dr"
+                + " JOIN Users u on u.username = dr.createdby"
+                + " JOIN [Employees] e ON u.eid = e.eid"
+                + " ORDER BY dr.rid;";
+
+        try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
+            Map<Integer, Agenda> agendaMap = new HashMap<>();
+
+            while (rs.next()) {
+                int empId = rs.getInt("EmployeeID");
+                int leaveRequestId = rs.getInt("LeaveRequestID");
+                Date offDate = new Date(rs.getDate("OffWorkDate").getTime());
+
+                // Kiểm tra nếu nhân viên đã có trong map hay chưa
+                Agenda a = agendaMap.get(empId);
+                if (a == null) {
+                    // Nếu chưa có, tạo mới
+                    a = new Agenda();
+                    Employee e = new Employee();
+                    e.setId(empId);
+                    e.setName(rs.getString("EmployeeName"));
+
+                    Department d = new Department();
+                    d.setId(rs.getInt("DepartmentID"));
+                    e.setDept(d);
+
+                    Employee manager = new Employee();
+                    manager.setId(rs.getInt("ManagerID"));
+                    e.setManager(manager);
+
+                    a.setE(e);
+                    a.setRid(leaveRequestId);
+                    a.setD(new ArrayList<>()); // Khởi tạo danh sách ngày nghỉ
+
+                    // Thêm vào map
+                    agendaMap.put(empId, a);
+                }
+
+                // Thêm ngày nghỉ vào danh sách
+                a.getD().add(offDate);
+            }
+
+            // Chuyển map thành list
+            alist.addAll(agendaMap.values());
+
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return alist;
+    }
+    
+    
+    
+    public static void main(String[] args) {
+        LeaveRequestDBContext l = new LeaveRequestDBContext();
+        System.out.println(l.agenda());
     }
 }
