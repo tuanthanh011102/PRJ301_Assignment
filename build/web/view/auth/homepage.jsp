@@ -12,6 +12,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <a href="${pageContext.request.contextPath}/leaverequest/list">
+            danh sach don
+        </a>
     </body>
 </html>
