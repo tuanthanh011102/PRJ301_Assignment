@@ -4,6 +4,7 @@
     Author     : Lenovo
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,8 +13,14 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <a href="${pageContext.request.contextPath}/leaverequest/list">
-            danh sach don
-        </a>
+        <table>
+            <c:forEach var="feature" items="${feature}">
+                <tr>
+                    <td>
+                        <a href="<c:url value='${feature.url}' />">${feature.name}</a>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
     </body>
 </html>
